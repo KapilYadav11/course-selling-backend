@@ -7,7 +7,7 @@ courseRouter.get("/purchase", (req, res) => {
     });
 });
 
-courseRouter.get("/", (req, res) => {
+courseRouter.get("/preview", (req, res) => {
     return res.json({
         message: "All courses endpoint"
     });

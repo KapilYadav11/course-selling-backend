@@ -4,8 +4,8 @@ const { userRouter } = require("./routes/user");
 
 const app = express();
 
-app.use("/course", courseRouter);
-app.use("/user", userRouter);
+app.use("/api/course", courseRouter);
+app.use("/api/user", userRouter);
 
 
 app.listen(3000, () => {
