@@ -1,11 +1,10 @@
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
-const { Router } = require('express');
-const { adminModel, userModel } = require('../db');
-const userRouter = Router();
+const { Router } = require("express");
+const adminRouter = Router();
+const { adminModel } = require("../db");
+const jwt = require("jsonwebtoken");
 
-userRouter.post("/signup", async(req, res) => {
-   try {
+adminRouter.post("/signup", async(req, res) => {
+     try {
     let { email, password, firstName, lastName } = req.body;
         if(!email || !password || !firstName || !lastName){
             return res.status(401).json({
@@ -15,7 +14,7 @@ userRouter.post("/signup", async(req, res) => {
 
         let hashPassword = await bcrypt.hash(password, 10);
 
-        let newUser = await userModel.create({
+        let newUser = await adminModel.create({
             email,
             password:hashPassword,
             firstName,
@@ -28,7 +27,7 @@ userRouter.post("/signup", async(req, res) => {
             })
         };
 
-        let token = jwt.sign({id:newUser._id}, process.env.JWT_SECRET_KEY_USER,{
+        let token = jwt.sign({id:newUser_id}, process.env.JWT_SECRET_KEY_ADMIN,{
             expiresIn:"1h"
         });
 
@@ -47,14 +46,12 @@ userRouter.post("/signup", async(req, res) => {
             message:"Internal server Error in the user registerd login",
             error
         });
-        
     }
-});
+});    
 
 
-
-userRouter.post("/signin", async(req, res) => {
-     try {
+adminRouter.post("/signin", async(req, res) => {
+    try {
         let{ email, password } = req.body;
         if( !email || !password){
             return res.status(404).json({
@@ -62,7 +59,7 @@ userRouter.post("/signin", async(req, res) => {
             })
         };
 
-        let user = await userModel.findOne({
+        let user = await adminModel.findOne({
             email,
         });
         if(!user){
@@ -78,7 +75,7 @@ userRouter.post("/signin", async(req, res) => {
             })
         };
 
-        let token =  jwt.sign({id:user._id}, process.env.JWT_SECRET_KEY_USER,{
+        let token =  jwt.sign({id:user._id}, process.env.JWT_SECRET_KEY_ADMIN,{
             expiresIn:"1h"
         });
         res.cookie("token", token, {
@@ -87,7 +84,7 @@ userRouter.post("/signin", async(req, res) => {
 
         return res.status(200).json({
             message:"User login successfully!",
-            user
+            UserModel
         })
         
     } catch (error) {
@@ -98,12 +95,24 @@ userRouter.post("/signin", async(req, res) => {
   }
 });
 
-userRouter.get("/purchases", (req, res) => {
+adminRouter.post("/", (req, res) => {
     return res.json({
-        message: "Purchases endpoint"
+        message: "Create Course endpoint"
     });
 });
+adminRouter.put("/", (req, res)=>{
+    return res.json({
+        message:"Admin put the courses"
+    })
+});
+
+adminRouter.get("/bulk", (req, res)=>{
+    return res.json({
+        message:"Amin can get all the courses "
+    })
+})
+
 
 module.exports = {
-    userRouter
+    adminRouter
 }
